@@ -20,39 +20,41 @@ CreateNewMeetupForm = React.createClass
       DOM.fieldset null,
         DOM.legend null, "New Meetup"
 
-        DOM.div
-          className: "form-group"
-          DOM.label
-            htmlFor: "title"
-            className: "col-lg-2 control-label"
-            "Title"
-          DOM.div
-            className: "col-lg-10"
-            DOM.input
-              className: "form-control"
-              placeholder: "Meetup title"
-              id: "title"
-              type: "text"
-              value: @state.title
-              onChange: @titleChanged
+      formInputWithLabel
+        id: "title"
+        value: @state.title
+        onChange: @titleChanged
+        placeholder: "Meetup title"
+        labelText: "Title"
 
-        DOM.div
-          className: "form-group"
-          DOM.label
-            htmlFor: "title"
-            className: "col-lg-2 control-label"
-            "Description"
-          DOM.div
-            className: "col-lg-10"
-            DOM.input
-              className: "form-control"
-              placeHolder: "Meetup description"
-              id: "description"
-              type: "text"
-              value: @state.description
-              onChange: @descriptionChanged
+      formInputWithLabel
+        id: "description"
+        value: @state.description
+        onChange: @descriptionChanged
+        placeholder: "Meetup description"
+        labelText: "Description"
+
+FormInputWithLabel = React.createClass
+  displayName: "FormInputWithLabel"
+  render: ->
+    DOM.div
+      className: "form-group"
+      DOM.label
+        htmlFor: @props.id
+        className: "col-lg-2 control-label"
+        "Title"
+      DOM.div
+        className: "col-lg-10"
+        DOM.input
+          className: "form-control"
+          placeholder: @props.placeholder
+          id: @props.id
+          type: "text"
+          value: @props.value
+          onChange: @props.onChange
 
 createNewMeetupForm = React.createFactory(CreateNewMeetupForm)
+formInputWithLabel  = React.createFactory(FormInputWithLabel)
 
 $ ->
   React.render(
