@@ -42,7 +42,7 @@ FormInputWithLabel = React.createClass
       DOM.label
         htmlFor: @props.id
         className: "col-lg-2 control-label"
-        "Title"
+        @props.labelText
       DOM.div
         className: "col-lg-10"
         DOM.input
