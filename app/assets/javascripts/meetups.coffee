@@ -14,6 +14,17 @@ CreateNewMeetupForm = React.createClass
   descriptionChanged: (event) ->
     @setState(description: event.target.value)
 
+  formSubmitted: (event) ->
+    event.preventDefault()
+
+    $.ajax
+      url: "meetups.json",
+      type: "POST",
+      dataType: "JSON",
+      contentType: "application/json",
+      processData: false,
+      data: JSON.stringify({meetup: @state})
+
   render: ->
     DOM.form
       className: "form-horizontal"
@@ -33,6 +44,15 @@ CreateNewMeetupForm = React.createClass
         onChange: @descriptionChanged
         placeholder: "Meetup description"
         labelText: "Description"
+
+      DOM.div
+        className: "form-group"
+        DOM.div
+          className: "col-lg-10 col-lg-offset-2"
+          DOM.button
+            type: "submit"
+            className: "btn btn-primary"
+            "Save"
 
 FormInputWithLabel = React.createClass
   displayName: "FormInputWithLabel"
