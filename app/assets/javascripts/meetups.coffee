@@ -22,16 +22,23 @@ CreateNewMeetupForm = React.createClass
     event.preventDefault()
 
     $.ajax
-      url: "meetups.json",
+      url: "/meetups.json",
       type: "POST",
       dataType: "JSON",
       contentType: "application/json",
       processData: false,
-      data: JSON.stringify({meetup: @state})
+      data: JSON.stringify({meetup: {
+        title: @state.title
+        description: @state.description
+        date: "#{@state.date.getFullYear()}-#{@state.date.getMonth()+1}-#{@state.date.getDate()}"
+      }})
 
   render: ->
     DOM.form
       className: "form-horizontal"
+      method: "post"
+      action: "/meetups"
+      onSubmit: @formSubmitted
       DOM.fieldset null,
         DOM.legend null, "New Meetup"
 
