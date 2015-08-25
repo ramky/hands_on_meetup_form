@@ -1,5 +1,11 @@
 DOM = React.DOM
 
+monthName = (monthNumberStartingFromZero) ->
+  [
+    "January", "February", "March", "April", "May", "June", "July",
+    "August", "September", "October", "November", "December"
+  ][monthNumberStartingFromZero]
+
 CreateNewMeetupForm = React.createClass
   displayName: "CreateNewMeetupForm"
   getInitialState: ->
@@ -7,6 +13,7 @@ CreateNewMeetupForm = React.createClass
       title: ""
       description: ""
       date: new Date()
+      seoText: null
     }
 
   titleChanged: (event) ->
@@ -17,6 +24,20 @@ CreateNewMeetupForm = React.createClass
 
   dateChanged: (newDate) ->
     @setState(date: newDate)
+
+  fieldChanged: (fieldName, event) ->
+    stateUpdate = {}
+    stateUpdate[fieldName] = event.target.value
+    @setState(stateUpdate)
+
+  seoChanged: (seoText) ->
+    @setState(seoText: seoText)
+
+  computeDefaultSeoText: () ->
+    words = @state.title.toLowerCase().split(/\s+/)
+    words.push(monthName(@state.date.getMonth()))
+    words.push(@state.date.getFullYear().toString())
+    words.filter( (string) -> string.trim().length > 0).join("-").toLowerCase()
 
   formSubmitted: (event) ->
     event.preventDefault()
@@ -60,6 +81,13 @@ CreateNewMeetupForm = React.createClass
         onChange: @dateChanged
         date: @state.date
 
+      formInputWithLabelAndReset
+        id: "seo"
+        value: if @state.seoText? then @state.seoText else @computeDefaultSeoText()
+        onChange: @seoChanged
+        placeholder: "SEO text"
+        labelText: "seo"
+
       DOM.div
         className: "form-group"
         DOM.div
@@ -68,6 +96,43 @@ CreateNewMeetupForm = React.createClass
             type: "submit"
             className: "btn btn-primary"
             "Save"
+
+FormInputWithLabelAndReset = React.createClass
+  displayName: "FormInputWithLabelAndReset"
+  render: ->
+    DOM.div
+      className: "form-group"
+      DOM.label
+        htmlFor: @props.id
+        className: "col-lg-2 control-label"
+        @props.labelText
+      DOM.div
+        className: "col-lg-8"
+        DOM.div
+          className: "input-group"
+          DOM.input
+            className: "form-control"
+            placeholder: @props.placeholder
+            id: @props.id
+            value: @props.value
+            onChange: (event) =>
+              @props.onChange(event.target.value)
+          DOM.span
+            className: "input-group-btn"
+            DOM.button
+              onClick: () =>
+                @props.onChange(null)
+              className: "btn btn-default"
+              type: "button"
+              DOM.i
+                className: "fa fa-magic"
+            DOM.button
+              onClick: () =>
+                @props.onChange("")
+              className: "btn btn-default"
+              type: "button"
+              DOM.i
+                className: "fa fa-times-circle"
 
 FormInputWithLabel = React.createClass
   displayName: "FormInputWithLabel"
@@ -116,12 +181,6 @@ DateWithLabel = React.createClass
     )
     @props.onChange(newDate)
 
-  monthName: (monthNumberStartingFromZero) ->
-    [
-      "January", "February", "March", "April", "May", "June", "July",
-      "August", "September", "October", "November", "December"
-    ][monthNumberStartingFromZero]
-
   dayName: (date) ->
     dayNameStartingWithSundayZero = new Date(
       @props.date.getFullYear(),
@@ -151,7 +210,7 @@ DateWithLabel = React.createClass
           className: "form-control"
           onChange: @onMonthChange
           value: @props.date.getMonth()
-          DOM.option(value: month, key: month, "#{month+1}-#{@monthName(month)}") for month in [0..11]
+          DOM.option(value: month, key: month, "#{month+1}-#{monthName(month)}") for month in [0..11]
       DOM.div
         className: "col-lg-2"
         onChange: @onDateChange
@@ -162,6 +221,7 @@ DateWithLabel = React.createClass
 
 createNewMeetupForm = React.createFactory(CreateNewMeetupForm)
 formInputWithLabel  = React.createFactory(FormInputWithLabel)
+formInputWithLabelAndReset = React.createFactory(FormInputWithLabelAndReset)
 dateWithLabel       = React.createFactory(DateWithLabel)
 
 $ ->
